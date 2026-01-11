@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserPlus, Play, Eye, EyeOff, User, ArrowRight, RefreshCcw, XCircle, Users, Minus, Plus } from 'lucide-react';
+import { UserPlus, Play, Eye, EyeOff, User, ArrowRight, RefreshCcw, XCircle, Users, Minus, Plus, Gamepad2, Trophy, Tv, Shuffle } from 'lucide-react';
 import { WORD_LIST } from './data/words';
+import { TEMATICAS, LISTA_TEMATICAS } from './data/wordlist_tematicas';
 
 const App = () => {
     const [players, setPlayers] = useState([]);
     const [newPlayer, setNewPlayer] = useState('');
-    const [gameState, setGameState] = useState('setup'); // setup, assignment, start
+    const [gameState, setGameState] = useState('setup'); // setup, modeSelect, assignment, start
     const [gameData, setGameData] = useState(null);
     const [currentPlayerIdx, setCurrentPlayerIdx] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
     const [numImpostors, setNumImpostors] = useState(1);
+    
+    // Nuevo: Modo de juego y temática
+    const [gameMode, setGameMode] = useState('clasico'); // clasico, tematico
+    const [selectedTematica, setSelectedTematica] = useState(null);
+    
+    // Sistema anti-repetición: guarda palabras usadas durante la sesión
+    const usedWordsRef = useRef(new Set());
 
     // Calcula el máximo de impostores permitidos (máximo la mitad de jugadores - 1)
     const maxImpostors = Math.max(1, Math.floor(players.length / 2) - 1) || 1;
@@ -26,11 +34,52 @@ const App = () => {
         setPlayers(players.filter(p => p !== name));
     };
 
-    const startGame = () => {
+    // Ir a la pantalla de selección de modo
+    const goToModeSelect = () => {
+        if (players.length < 3) return;
+        setGameState('modeSelect');
+    };
+
+    // Seleccionar modo clásico
+    const selectClassicMode = () => {
+        setGameMode('clasico');
+        setSelectedTematica(null);
+        startGame('clasico', null);
+    };
+
+    // Seleccionar modo temático
+    const selectTematicMode = (tematicaId) => {
+        setGameMode('tematico');
+        setSelectedTematica(tematicaId);
+        startGame('tematico', tematicaId);
+    };
+
+    const startGame = (mode, tematicaId) => {
         if (players.length < 3) return;
 
-        const randomIndex = Math.floor(Math.random() * WORD_LIST.length);
-        const selectedWord = WORD_LIST[randomIndex];
+        // Obtener la lista de palabras según el modo
+        let wordList;
+        if (mode === 'tematico' && tematicaId) {
+            wordList = TEMATICAS[tematicaId].palabras;
+        } else {
+            wordList = WORD_LIST;
+        }
+
+        // Filtrar palabras ya usadas en esta sesión
+        const availableWords = wordList.filter(w => !usedWordsRef.current.has(w.word));
+        
+        // Si no quedan palabras disponibles, reiniciar el registro
+        if (availableWords.length === 0) {
+            usedWordsRef.current.clear();
+            availableWords.push(...wordList);
+        }
+
+        // Seleccionar palabra aleatoria de las disponibles
+        const randomIndex = Math.floor(Math.random() * availableWords.length);
+        const selectedWord = availableWords[randomIndex];
+        
+        // Marcar palabra como usada
+        usedWordsRef.current.add(selectedWord.word);
         
         // Seleccionar múltiples impostores sin repetir
         const impostorIndices = [];
@@ -52,7 +101,9 @@ const App = () => {
             word: selectedWord.word,
             clue: randomClue,
             impostorIndices: impostorIndices,
-            startingPlayer: players[startingPlayerIdx]
+            startingPlayer: players[startingPlayerIdx],
+            isTematico: mode === 'tematico',
+            tematicaNombre: mode === 'tematico' ? TEMATICAS[tematicaId].nombre : null
         });
         setGameState('assignment');
         setCurrentPlayerIdx(0);
@@ -70,6 +121,16 @@ const App = () => {
 
     const resetGame = () => {
         setGameState('setup');
+        setGameData(null);
+        setCurrentPlayerIdx(0);
+        setIsRevealed(false);
+        setGameMode('clasico');
+        setSelectedTematica(null);
+    };
+
+    // Volver a selección de modo para jugar otra partida rápida
+    const playAgain = () => {
+        setGameState('modeSelect');
         setGameData(null);
         setCurrentPlayerIdx(0);
         setIsRevealed(false);
@@ -190,7 +251,7 @@ const App = () => {
                                             Máximo {maxImpostors} impostor{maxImpostors > 1 ? 'es' : ''} para {players.length} jugadores
                                         </p>
                                     </div>
-                                    <button onClick={startGame} style={{ width: '100%', marginTop: '1rem' }}>
+                                    <button onClick={goToModeSelect} style={{ width: '100%', marginTop: '1rem' }}>
                                         <Play size={20} style={{ marginRight: '8px' }} />
                                         Empezar Juego
                                     </button>
@@ -201,6 +262,82 @@ const App = () => {
                                     Mínimo 3 jugadores para empezar
                                 </p>
                             )}
+                        </div>
+                    </motion.div>
+                )}
+
+                {gameState === 'modeSelect' && (
+                    <motion.div
+                        key="modeSelect"
+                        variants={screenVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                    >
+                        <h1>ELIGE MODO</h1>
+                        <div className="card">
+                            <button 
+                                onClick={selectClassicMode} 
+                                style={{ width: '100%', marginBottom: '1rem', padding: '1.5rem' }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+                                    <Shuffle size={24} />
+                                    <span style={{ fontSize: '1.1rem' }}>Modo Clásico</span>
+                                </div>
+                                <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem', fontWeight: 'normal' }}>
+                                    Palabra aleatoria · Impostor ve una pista
+                                </p>
+                            </button>
+
+                            <div style={{ 
+                                marginTop: '1.5rem', 
+                                padding: '1rem', 
+                                background: 'rgba(168, 85, 247, 0.1)', 
+                                borderRadius: '12px',
+                                border: '1px solid rgba(168, 85, 247, 0.3)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                                    <Trophy size={20} style={{ color: '#a855f7' }} />
+                                    <span style={{ color: '#a855f7', fontWeight: '600' }}>Modo Temático</span>
+                                </div>
+                                <p style={{ fontSize: '0.75rem', opacity: 0.6, marginBottom: '1rem', textAlign: 'center' }}>
+                                    El impostor NO recibe pista, solo sabe la temática
+                                </p>
+                                
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    {LISTA_TEMATICAS.map((tematica) => (
+                                        <button
+                                            key={tematica.id}
+                                            onClick={() => selectTematicMode(tematica.id)}
+                                            className="secondary"
+                                            style={{ 
+                                                width: '100%', 
+                                                padding: '1rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <span style={{ fontSize: '1.5rem' }}>{tematica.icono}</span>
+                                                <span>{tematica.nombre}</span>
+                                            </div>
+                                            <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>
+                                                {tematica.cantidadPalabras} palabras
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={resetGame} 
+                                className="secondary" 
+                                style={{ width: '100%', marginTop: '1.5rem' }}
+                            >
+                                <ArrowRight size={18} style={{ marginRight: '8px', transform: 'rotate(180deg)' }} />
+                                Volver
+                            </button>
                         </div>
                     </motion.div>
                 )}
@@ -237,11 +374,22 @@ const App = () => {
                                         exit={{ scale: 0.9, opacity: 0 }}
                                     >
                                         <p style={{ fontSize: '0.9rem', opacity: 0.6, marginBottom: '0.5rem' }}>
-                                            {isCurrentPlayerImpostor() ? "PISTA (ERES IMPOSTOR):" : "PALABRA SECRETA:"}
+                                            {isCurrentPlayerImpostor() 
+                                                ? (gameData.isTematico ? `¡ERES IMPOSTOR! (${gameData.tematicaNombre})` : "PISTA (ERES IMPOSTOR):")
+                                                : "PALABRA SECRETA:"
+                                            }
                                         </p>
                                         <div className={`secret-word ${isCurrentPlayerImpostor() ? 'impostor' : ''}`}>
-                                            {isCurrentPlayerImpostor() ? gameData.clue : gameData.word}
+                                            {isCurrentPlayerImpostor() 
+                                                ? (gameData.isTematico ? "???" : gameData.clue)
+                                                : gameData.word
+                                            }
                                         </div>
+                                        {isCurrentPlayerImpostor() && gameData.isTematico && (
+                                            <p style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: '0.5rem' }}>
+                                                La palabra es sobre: {gameData.tematicaNombre}
+                                            </p>
+                                        )}
                                         {isCurrentPlayerImpostor() && (
                                             <div className="scan-line"></div>
                                         )}
@@ -288,10 +436,16 @@ const App = () => {
                             </p>
                         </div>
 
-                        <button onClick={resetGame} className="secondary" style={{ width: '100%' }}>
-                            <RefreshCcw size={20} style={{ marginRight: '8px' }} />
-                            Nueva Partida
-                        </button>
+                        <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
+                            <button onClick={playAgain} style={{ width: '100%' }}>
+                                <Play size={20} style={{ marginRight: '8px' }} />
+                                Jugar Otra Vez
+                            </button>
+                            <button onClick={resetGame} className="secondary" style={{ width: '100%' }}>
+                                <RefreshCcw size={20} style={{ marginRight: '8px' }} />
+                                Cambiar Jugadores
+                            </button>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
