@@ -1,0 +1,112 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║              🎮 EL IMPOSTOR - PWA LISTA PARA INSTALAR 🎮         ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+✅ APLICACIÓN CONSTRUIDA EXITOSAMENTE
+
+📦 Tamaño: ~1.2 MB
+🎨 Diseño: Futurista con efectos neón
+📱 Instalable: Android + iOS
+🔄 Offline: Funciona sin internet
+🎯 Palabras: 1000 con 3 pistas cada una
+
+╔══════════════════════════════════════════════════════════════════╗
+║                    🚀 CÓMO COMPARTIR CON AMIGOS                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+┌─ OPCIÓN 1: HOSTING ONLINE (RECOMENDADO) ─────────────────────┐
+│                                                                │
+│  1. Ve a: https://app.netlify.com/drop                       │
+│  2. Arrastra la carpeta "dist" a la página                   │
+│  3. Copia la URL que te da (ej: https://tu-app.netlify.app)  │
+│  4. Comparte esa URL con tus amigos                           │
+│                                                                │
+│  ⏱️  Tiempo: 2 minutos                                         │
+│  💰 Costo: GRATIS                                              │
+│  🌐 Acceso: Desde cualquier lugar                             │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+
+┌─ OPCIÓN 2: SERVIDOR LOCAL (RED WIFI) ────────────────────────┐
+│                                                                │
+│  1. Ejecuta: .\deploy.ps1                                     │
+│  2. Elige "S" para servidor local                             │
+│  3. Comparte la URL que aparece (ej: http://192.168.1.100:3000) │
+│  4. Tus amigos deben estar en la misma WiFi                   │
+│                                                                │
+│  ⏱️  Tiempo: 1 minuto                                          │
+│  💰 Costo: GRATIS                                              │
+│  🌐 Acceso: Solo en tu red WiFi                               │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════╗
+║                   📱 CÓMO INSTALAN TUS AMIGOS                    ║
+╚══════════════════════════════════════════════════════════════════╝
+
+┌─ ANDROID (Chrome/Edge/Samsung Internet) ─────────────────────┐
+│                                                                │
+│  1. Abrir la URL en el navegador                              │
+│  2. Tocar el mensaje "Añadir a pantalla de inicio"            │
+│     o el menú (⋮) → "Instalar aplicación"                     │
+│  3. ¡Listo! El icono aparece en la pantalla de inicio         │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+
+┌─ iOS (Safari) ───────────────────────────────────────────────┐
+│                                                                │
+│  1. Abrir la URL en Safari (obligatorio)                      │
+│  2. Tocar el botón de compartir (□↑)                          │
+│  3. Seleccionar "Añadir a pantalla de inicio"                 │
+│  4. Tocar "Añadir"                                             │
+│  5. ¡Listo! El icono aparece en la pantalla de inicio         │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════╗
+║                      📁 ARCHIVOS IMPORTANTES                     ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📂 dist/                      ← Carpeta para subir a hosting
+📄 INICIO_RAPIDO.md          ← Lee esto PRIMERO
+📄 GUIA_INSTALACION.md       ← Envía esto a tus amigos
+📄 README.md                 ← Documentación completa
+📄 deploy.ps1                ← Script de despliegue automático
+📄 DESIGN_IMPROVEMENTS.md    ← Detalles del diseño futurista
+
+╔══════════════════════════════════════════════════════════════════╗
+║                        ✨ CARACTERÍSTICAS                        ║
+╚══════════════════════════════════════════════════════════════════╝
+
+✅ 1000 palabras cuidadosamente seleccionadas
+✅ 3 pistas diferentes por palabra (aleatorias)
+✅ Diseño futurista con glassmorphism
+✅ Efectos neón cyan y violeta
+✅ Animaciones suaves a 60fps
+✅ Diferenciación visual impostor/jugador normal
+✅ Línea de escaneo láser para el impostor
+✅ PWA instalable en móviles
+✅ Funciona offline después de instalar
+✅ Icono personalizado (ojo neón)
+✅ Actualizaciones automáticas
+✅ Responsive (móviles y tablets)
+
+╔══════════════════════════════════════════════════════════════════╗
+║                      🎯 PRÓXIMOS PASOS                           ║
+╚══════════════════════════════════════════════════════════════════╝
+
+1️⃣  Lee INICIO_RAPIDO.md
+2️⃣  Elige método de distribución (Netlify o servidor local)
+3️⃣  Comparte la URL con tus amigos
+4️⃣  Envíales GUIA_INSTALACION.md si tienen dudas
+5️⃣  ¡A jugar! 🎮
+
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║              ¡TODO LISTO PARA COMPARTIR! 🚀                      ║
+║                                                                  ║
+║         Desarrollado con ❤️ usando React, Vite y PWA            ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
