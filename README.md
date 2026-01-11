@@ -10,7 +10,9 @@ Un emocionante juego de deducción social donde un jugador es el impostor y debe
 
 La forma más fácil de instalar el juego en tu dispositivo Android:
 
-1. **Descarga la APK** desde [Releases](https://github.com/Yisuescopeta/Juego-del-Impostor/releases)
+[![Descargar APK](https://img.shields.io/badge/Descargar-APK%20v1.0-brightgreen?style=for-the-badge&logo=android)](https://github.com/Yisuescopeta/Juego-del-Impostor/releases/download/v1.0/ElImpostor-v1.0.apk)
+
+1. **Descarga la APK** haciendo clic en el botón de arriba o desde [Releases](https://github.com/Yisuescopeta/Juego-del-Impostor/releases)
 2. **Abre el archivo APK** en tu dispositivo Android
 3. Si aparece "Instalación bloqueada":
    - Ve a `Ajustes → Seguridad`
