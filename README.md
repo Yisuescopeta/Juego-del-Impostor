@@ -45,7 +45,8 @@ La forma más fácil de instalar el juego en tu dispositivo Android:
 
 ## ✨ Características
 
-- 🎯 **1000+ palabras** con 3 pistas cada una
+- 🎯 **1100+ palabras** con 3 pistas cada una
+- 🕵️ **Múltiples impostores** - Configura cuántos impostores quieres
 - 🎨 **Diseño futurista** con efectos neón
 - 📱 **Funciona sin internet** - Juega donde quieras
 - 🔄 **Partidas rápidas** - 5-10 minutos por ronda
@@ -63,11 +64,18 @@ La forma más fácil de instalar el juego en tu dispositivo Android:
 ### Estructura del proyecto:
 ```
 EL Impostor/
-├── android/                 # Proyecto Android Studio
-├── src/                     # Código fuente React
-│   ├── App.jsx             # Componente principal
-│   └── data/               # Lista de palabras
-├── dist/                    # Build de producción
+├── android/                     # Versión principal (Android Studio)
+├── src/                         # Código fuente React
+│   ├── App.jsx                 # Componente principal
+│   └── data/                   # Lista de palabras (6 archivos)
+│       ├── words.js            # Índice principal
+│       ├── wordlist_part1.js   # Palabras del hogar
+│       ├── wordlist_part2.js   # Animales y comida
+│       ├── wordlist_part3.js   # Ropa, transporte, cuerpo
+│       ├── wordlist_part4.js   # Emociones y adjetivos
+│       ├── wordlist_part5.js   # Naturaleza y videojuegos
+│       └── wordlist_part6.js   # Personajes y profesiones
+├── versiones_secundarias/       # Versiones alternativas (PWA/Web)
 └── package.json
 ```
 
