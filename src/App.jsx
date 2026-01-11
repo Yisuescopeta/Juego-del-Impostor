@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserPlus, Play, Eye, EyeOff, User, ArrowRight, RefreshCcw, XCircle } from 'lucide-react';
+import { UserPlus, Play, Eye, EyeOff, User, ArrowRight, RefreshCcw, XCircle, Users, Minus, Plus } from 'lucide-react';
 import { WORD_LIST } from './data/words';
 
 const App = () => {
@@ -10,6 +10,10 @@ const App = () => {
     const [gameData, setGameData] = useState(null);
     const [currentPlayerIdx, setCurrentPlayerIdx] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
+    const [numImpostors, setNumImpostors] = useState(1);
+
+    // Calcula el máximo de impostores permitidos (máximo la mitad de jugadores - 1)
+    const maxImpostors = Math.max(1, Math.floor(players.length / 2) - 1) || 1;
 
     const addPlayer = () => {
         if (newPlayer.trim() && !players.includes(newPlayer.trim())) {
@@ -27,7 +31,18 @@ const App = () => {
 
         const randomIndex = Math.floor(Math.random() * WORD_LIST.length);
         const selectedWord = WORD_LIST[randomIndex];
-        const impostorIdx = Math.floor(Math.random() * players.length);
+        
+        // Seleccionar múltiples impostores sin repetir
+        const impostorIndices = [];
+        const availableIndices = [...Array(players.length).keys()];
+        const actualImpostors = Math.min(numImpostors, maxImpostors);
+        
+        for (let i = 0; i < actualImpostors; i++) {
+            const randomIdx = Math.floor(Math.random() * availableIndices.length);
+            impostorIndices.push(availableIndices[randomIdx]);
+            availableIndices.splice(randomIdx, 1);
+        }
+        
         const startingPlayerIdx = Math.floor(Math.random() * players.length);
 
         const clues = selectedWord.clues || [selectedWord.clue];
@@ -36,7 +51,7 @@ const App = () => {
         setGameData({
             word: selectedWord.word,
             clue: randomClue,
-            impostorIdx: impostorIdx,
+            impostorIndices: impostorIndices,
             startingPlayer: players[startingPlayerIdx]
         });
         setGameState('assignment');
@@ -58,6 +73,24 @@ const App = () => {
         setGameData(null);
         setCurrentPlayerIdx(0);
         setIsRevealed(false);
+    };
+
+    // Funciones para ajustar número de impostores
+    const incrementImpostors = () => {
+        if (numImpostors < maxImpostors) {
+            setNumImpostors(numImpostors + 1);
+        }
+    };
+
+    const decrementImpostors = () => {
+        if (numImpostors > 1) {
+            setNumImpostors(numImpostors - 1);
+        }
+    };
+
+    // Verifica si el jugador actual es impostor
+    const isCurrentPlayerImpostor = () => {
+        return gameData?.impostorIndices?.includes(currentPlayerIdx) || false;
     };
 
     const screenVariants = {
@@ -126,10 +159,42 @@ const App = () => {
                             </div>
 
                             {players.length >= 3 && (
-                                <button onClick={startGame} style={{ width: '100%', marginTop: '2rem' }}>
-                                    <Play size={20} style={{ marginRight: '8px' }} />
-                                    Empezar Juego
-                                </button>
+                                <>
+                                    <div className="impostor-selector" style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.3)' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                            <Users size={20} style={{ color: '#a855f7' }} />
+                                            <span style={{ color: '#a855f7', fontWeight: '600' }}>Número de Impostores</span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+                                            <button 
+                                                onClick={decrementImpostors} 
+                                                className="secondary" 
+                                                style={{ padding: '0.5rem', minWidth: '40px' }}
+                                                disabled={numImpostors <= 1}
+                                            >
+                                                <Minus size={20} />
+                                            </button>
+                                            <span style={{ fontSize: '1.5rem', fontWeight: 'bold', minWidth: '40px', textAlign: 'center' }}>
+                                                {numImpostors}
+                                            </span>
+                                            <button 
+                                                onClick={incrementImpostors} 
+                                                className="secondary" 
+                                                style={{ padding: '0.5rem', minWidth: '40px' }}
+                                                disabled={numImpostors >= maxImpostors}
+                                            >
+                                                <Plus size={20} />
+                                            </button>
+                                        </div>
+                                        <p style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '0.5rem' }}>
+                                            Máximo {maxImpostors} impostor{maxImpostors > 1 ? 'es' : ''} para {players.length} jugadores
+                                        </p>
+                                    </div>
+                                    <button onClick={startGame} style={{ width: '100%', marginTop: '1rem' }}>
+                                        <Play size={20} style={{ marginRight: '8px' }} />
+                                        Empezar Juego
+                                    </button>
+                                </>
                             )}
                             {players.length < 3 && (
                                 <p style={{ fontSize: '0.9rem', opacity: 0.5, marginTop: '1rem' }}>
@@ -172,12 +237,12 @@ const App = () => {
                                         exit={{ scale: 0.9, opacity: 0 }}
                                     >
                                         <p style={{ fontSize: '0.9rem', opacity: 0.6, marginBottom: '0.5rem' }}>
-                                            {currentPlayerIdx === gameData.impostorIdx ? "PISTA (ERES EL IMPOSTOR):" : "PALABRA SECRETA:"}
+                                            {isCurrentPlayerImpostor() ? "PISTA (ERES IMPOSTOR):" : "PALABRA SECRETA:"}
                                         </p>
-                                        <div className={`secret-word ${currentPlayerIdx === gameData.impostorIdx ? 'impostor' : ''}`}>
-                                            {currentPlayerIdx === gameData.impostorIdx ? gameData.clue : gameData.word}
+                                        <div className={`secret-word ${isCurrentPlayerImpostor() ? 'impostor' : ''}`}>
+                                            {isCurrentPlayerImpostor() ? gameData.clue : gameData.word}
                                         </div>
-                                        {currentPlayerIdx === gameData.impostorIdx && (
+                                        {isCurrentPlayerImpostor() && (
                                             <div className="scan-line"></div>
                                         )}
                                         <p style={{ fontSize: '0.8rem', opacity: 0.5, marginTop: '1rem' }}>
